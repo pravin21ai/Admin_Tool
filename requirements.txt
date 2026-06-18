@@ -1,0 +1,12 @@
+streamlit
+fastapi
+uvicorn
+asyncpg
+psycopg2-binary
+openpyxl
+pandas
+xlsxwriter
+python-jose[cryptography]
+bcrypt
+python-dotenv
+python-multipart
