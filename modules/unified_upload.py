@@ -190,9 +190,9 @@ def render():
                         b_id = list(broker_id_map.values())[0] if broker_id_map else None
                         
                         cur.execute('''
-                            INSERT INTO mst_group (broker_id, group_code, group_name, email, mobile_no, status, created_at, updated_at) 
-                            VALUES (%s, %s, %s, %s, %s, 'ACTIVE', NOW(), NOW()) RETURNING group_id
-                        ''', (b_id, row.get('group_code'), row.get('group_name'), row.get('email'), row.get('phone')))
+                            INSERT INTO mst_group (broker_id, group_code, group_name, email, mobile_no, status, created_at, updated_at, mtm_loss, margin_loss, max_loss) 
+                            VALUES (%s, %s, %s, %s, %s, 'ACTIVE', NOW(), NOW(), %s, %s, %s) RETURNING group_id
+                        ''', (b_id, row.get('group_code'), row.get('group_name'), row.get('email'), row.get('phone'), row.get('mtm_loss') or 0, row.get('margin_loss') or 0, row.get('max_loss_limit') or 0))
                         g_id = cur.fetchone()[0]
                         group_id_map[row.get('group_code')] = g_id
                         
@@ -225,9 +225,9 @@ def render():
                         allocated_margin = deposit * margin_leverage
 
                         cur.execute('''
-                            INSERT INTO mst_client (broker_id, group_id, client_code, client_name, email, mobile_no, deposit_amount, margin_leverage, allocated_margin, status, created_at, updated_at) 
-                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'ACTIVE', NOW(), NOW()) RETURNING client_id
-                        ''', (b_id, g_id, row.get('client_code'), row.get('client_name'), row.get('email'), row.get('phone'), deposit, margin_leverage, allocated_margin))
+                            INSERT INTO mst_client (broker_id, group_id, client_code, client_name, email, mobile_no, deposit_amount, margin_leverage, allocated_margin, status, created_at, updated_at, mtm_loss, margin_loss, max_loss) 
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, 'ACTIVE', NOW(), NOW(), %s, %s, %s) RETURNING client_id
+                        ''', (b_id, g_id, row.get('client_code'), row.get('client_name'), row.get('email'), row.get('phone'), deposit, margin_leverage, allocated_margin, row.get('mtm_loss') or 0, row.get('margin_loss') or 0, row.get('max_loss_limit') or 0))
                         c_id = cur.fetchone()[0]
                         client_id_map[str(row.get('client_code')).strip()] = (c_id, g_id)
                         
